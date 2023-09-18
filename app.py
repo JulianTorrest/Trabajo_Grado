@@ -1,4 +1,3 @@
-# Importar bibliotecas necesarias
 import streamlit as st
 import pandas as pd
 import gspread
@@ -7,58 +6,92 @@ import altair as alt
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+import seaborn as sns
+import matplotlib.pyplot as plt
+import base64
+from fpdf import FPDF
 
 # Función para obtener datos desde Google Sheets
 def get_data_from_gsheets(sheet_url):
-    # Credenciales y autenticación
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/spreadsheets',
              'https://www.googleapis.com/auth/drive']
     creds = ServiceAccountCredentials.from_json_keyfile_name('path_to_credentials.json', scope)
     client = gspread.authorize(creds)
-    
-    # Obtener el documento y la primera hoja
     sheet = client.open_by_url(sheet_url).sheet1
-
-    # Convertir los datos a DataFrame
     data = sheet.get_all_records()
     df = pd.DataFrame(data)
     return df
 
-# Iniciar la app Streamlit
+def get_csv_download_link(df):
+    csv = df.to_csv(index=False)
+    b64 = base64.b64encode(csv.encode()).decode()
+    return f'<a href="data:file/csv;base64,{b64}" download="data.csv">Descargar CSV</a>'
+
+# Función para descargar el DataFrame como PDF
+def get_pdf_download_link(df):
+    pdf = FPDF()
+    pdf.add_page()
+    page_width = pdf.w - 2 * pdf.l_margin
+    
+    col_width = page_width/len(df.columns)
+    row_height = pdf.font_size
+    
+    for col in df.columns:
+        pdf.cell(col_width, row_height*2, txt=col, border=1)
+        
+    pdf.ln(row_height*2)
+
+    for _, row in df.iterrows():
+        for item in row:
+            pdf.cell(col_width, row_height*2, txt=str(item), border=1)
+            
+    pdf.ln(row_height*2)
+    filename = "data.pdf"
+    pdf.output(filename).encode('latin1')
+    
+    with open(filename, "rb") as f:
+        b64 = base64.b64encode(f.read()).decode()
+    return f'<a href="data:file/pdf;base64,{b64}" download="data.pdf">Descargar PDF</a>'
+
+# Streamlit
 st.title('Análisis Exploratorio de Datos y Clustering desde Google Sheets')
 
-# Cargar los datos
 url = "https://docs.google.com/spreadsheets/d/1r4YcJuh5Qvp9_Z9D4soEyZymZD6tGTYBqqevXTIT6AQ/edit#gid=0"
-try:
-    data = get_data_from_gsheets(url)
-    st.write("Datos cargados exitosamente!")
-    st.write(data.head())
-except Exception as e:
-    st.write("Hubo un error al cargar los datos.")
-    st.write(e)
+data = get_data_from_gsheets(url)
 
-if 'data' in locals():
+st.write("Datos cargados exitosamente!")
+st.write(data.head())
+
+razon_social = st.text_input('RAZÓN SOCIAL')
+subsector = st.text_input('SUBSECTOR')
+sector = st.text_input('SECTOR')
+macrosector = st.text_input('MACROSECTOR')
+
+metrics = ['ROE', 'ROA', 'EBITDA', 'APALANCAMIENTO', 'ACTIVOS', 'PASIVOS', 'PATRIMONIO', 
+           'INGRESOS DE ACTIVIDADES ORDINARIAS', 'GANANCIA BRUTA', 'GANANCIA (PÉRDIDA) POR ACTIVIDADES DE OPERACIÓN', 'GANANCIA (PÉRDIDA)']
+
+if st.button('Ejecutar'):
+    # Filtro los datos
+    filtered_data = data[
+        (data['RAZÓN SOCIAL'].str.contains(razon_social)) & 
+        (data['SUBSECTOR'].str.contains(subsector)) & 
+        (data['SECTOR'].str.contains(sector)) & 
+        (data['MACROSECTOR'].str.contains(macrosector))
+    ]
+
     # Clustering
-    st.subheader('Clustering basado en métricas financieras')
-    num_clusters = st.slider("Selecciona el número de clusters", 2, 10, 3)
-    
-    # 1. Preprocesamiento
-    metrics = ['ROE', 'ROA', 'EBITDA', 'APALANCAMIENTO', 'ACTIVOS', 'PASIVOS', 'PATRIMONIO', 
-               'INGRESOS DE ACTIVIDADES ORDINARIAS', 'GANANCIA BRUTA', 'GANANCIA (PÉRDIDA) POR ACTIVIDADES DE OPERACIÓN', 'GANANCIA (PÉRDIDA)']
-    df_metrics = data[metrics].dropna()  # Eliminar cualquier fila con datos faltantes
+    df_metrics = filtered_data[metrics].dropna()  # Eliminar cualquier fila con datos faltantes
     scaler = StandardScaler()
     scaled_data = scaler.fit_transform(df_metrics)
-    
-    # 2. Modelo KMeans
-    kmeans = KMeans(n_clusters=num_clusters, random_state=42)
+
+    kmeans = KMeans(n_clusters=3, random_state=42)
     df_metrics['cluster'] = kmeans.fit_predict(scaled_data)
-    
-    # 3. Visualización
+
     pca = PCA(2)
     pca_result = pca.fit_transform(scaled_data)
     df_metrics['pca_1'] = pca_result[:,0]
     df_metrics['pca_2'] = pca_result[:,1]
-    
+
     chart = alt.Chart(df_metrics).mark_circle(size=60).encode(
         x='pca_1',
         y='pca_2',
@@ -66,47 +99,17 @@ if 'data' in locals():
         tooltip=['ROE', 'ROA', 'EBITDA']
     ).interactive()
     st.altair_chart(chart)
-
-    # Gráficos de métricas financieras
-    st.subheader('Visualización de Métricas Financieras')
-
-    selected_metric = st.selectbox("Selecciona una métrica para visualizar", metrics)
-
-    # Histograma
-    st.subheader('Histograma')
-    hist = alt.Chart(data).mark_bar().encode(
-        alt.X(selected_metric, bin=True),
-        y='count()',
-    )
-    st.altair_chart(hist)
-
-    # Boxplot
-    st.subheader('Boxplot')
-    boxplot = alt.Chart(data).mark_boxplot().encode(
-        x='SECTOR:N',
-        y=alt.Y(selected_metric, title=selected_metric)
-    )
-    st.altair_chart(boxplot)
-
-    # Gráfico de Barras
-    st.subheader('Gráfico de Barras por Sector')
-    bar = alt.Chart(data).mark_bar().encode(
-        x='SECTOR:N',
-        y=f'mean({selected_metric}):Q',
-        tooltip=[f'mean({selected_metric}):Q', 'SECTOR']
-    )
-    st.altair_chart(bar)
-
-    # Gráfico de Correlación
-    st.subheader('Gráfico de Correlación')
-    metric2 = st.selectbox("Selecciona una segunda métrica para la correlación", [m for m in metrics if m != selected_metric])
-    scatter = alt.Chart(data).mark_circle().encode(
-        alt.X(selected_metric),
-        alt.Y(metric2),
-        tooltip=['SECTOR', selected_metric, metric2]
-    ).interactive()
-    st.altair_chart(scatter)
-
+    
+    # Mapa de Calor
+    st.subheader('Mapa de Calor')
+    correlation_matrix = filtered_data[metrics].corr()
+    fig, ax = plt.subplots(figsize=(10, 8))
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', ax=ax)
+    st.pyplot(fig)
+    
+    # Descargar en PDF y CSV
+    st.markdown(get_csv_download_link(filtered_data), unsafe_allow_html=True)
+    st.markdown(get_pdf_download_link(filtered_data), unsafe_allow_html=True)
 
 # Para ejecutar el código:
 # 1. Guarda este código en un archivo, por ejemplo "app.py".
