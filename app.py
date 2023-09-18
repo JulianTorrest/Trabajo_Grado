@@ -37,15 +37,14 @@ except Exception as e:
     st.write("Hubo un error al cargar los datos.")
     st.write(e)
 
-# Si los datos se cargaron, realizar el clustering y visualización
 if 'data' in locals():
-    metrics = ['ROE', 'ROA', 'EBITDA', 'APALANCAMIENTO', 'ACTIVOS', 'PASIVOS', 'PATRIMONIO', 
-               'INGRESOS DE ACTIVIDADES ORDINARIAS', 'GANANCIA BRUTA', 'GANANCIA (PÉRDIDA) POR ACTIVIDADES DE OPERACIÓN', 'GANANCIA (PÉRDIDA)']
-    
+    # Clustering
     st.subheader('Clustering basado en métricas financieras')
     num_clusters = st.slider("Selecciona el número de clusters", 2, 10, 3)
     
     # 1. Preprocesamiento
+    metrics = ['ROE', 'ROA', 'EBITDA', 'APALANCAMIENTO', 'ACTIVOS', 'PASIVOS', 'PATRIMONIO', 
+               'INGRESOS DE ACTIVIDADES ORDINARIAS', 'GANANCIA BRUTA', 'GANANCIA (PÉRDIDA) POR ACTIVIDADES DE OPERACIÓN', 'GANANCIA (PÉRDIDA)']
     df_metrics = data[metrics].dropna()  # Eliminar cualquier fila con datos faltantes
     scaler = StandardScaler()
     scaled_data = scaler.fit_transform(df_metrics)
@@ -67,6 +66,47 @@ if 'data' in locals():
         tooltip=['ROE', 'ROA', 'EBITDA']
     ).interactive()
     st.altair_chart(chart)
+
+    # Gráficos de métricas financieras
+    st.subheader('Visualización de Métricas Financieras')
+
+    selected_metric = st.selectbox("Selecciona una métrica para visualizar", metrics)
+
+    # Histograma
+    st.subheader('Histograma')
+    hist = alt.Chart(data).mark_bar().encode(
+        alt.X(selected_metric, bin=True),
+        y='count()',
+    )
+    st.altair_chart(hist)
+
+    # Boxplot
+    st.subheader('Boxplot')
+    boxplot = alt.Chart(data).mark_boxplot().encode(
+        x='SECTOR:N',
+        y=alt.Y(selected_metric, title=selected_metric)
+    )
+    st.altair_chart(boxplot)
+
+    # Gráfico de Barras
+    st.subheader('Gráfico de Barras por Sector')
+    bar = alt.Chart(data).mark_bar().encode(
+        x='SECTOR:N',
+        y=f'mean({selected_metric}):Q',
+        tooltip=[f'mean({selected_metric}):Q', 'SECTOR']
+    )
+    st.altair_chart(bar)
+
+    # Gráfico de Correlación
+    st.subheader('Gráfico de Correlación')
+    metric2 = st.selectbox("Selecciona una segunda métrica para la correlación", [m for m in metrics if m != selected_metric])
+    scatter = alt.Chart(data).mark_circle().encode(
+        alt.X(selected_metric),
+        alt.Y(metric2),
+        tooltip=['SECTOR', selected_metric, metric2]
+    ).interactive()
+    st.altair_chart(scatter)
+
 
 # Para ejecutar el código:
 # 1. Guarda este código en un archivo, por ejemplo "app.py".
