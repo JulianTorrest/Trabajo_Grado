@@ -153,7 +153,7 @@ if 'data' in locals():
         silhouette = silhouette_score(scaled_data, df_metrics['cluster'])
         inertia = kmeans.inertia_
         st.write(f'Coeficiente de silueta: {silhouette:.2f}')
-        st.write(f'Inercia: {inertia:.2f}')
+        st.write(f'Inercia: {inertia:.2f}')  
 
         pca = PCA(2)
         pca_results = pca.fit_transform(scaled_data)
