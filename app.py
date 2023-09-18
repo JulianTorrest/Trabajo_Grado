@@ -172,6 +172,15 @@ if 'data' in locals():
         sns.heatmap(correlation, annot=True, cmap='coolwarm', ax=ax)
         st.pyplot(fig)
 
+        st.subheader('**Visualización de Clusters**')
+        chart = alt.Chart(df_pca).mark_circle(size=60).encode(
+            x='PC1',
+            y='PC2',
+            color=alt.Color('cluster:N', scale=alt.Scale(scheme='category10')),
+            tooltip=['PC1', 'PC2', 'cluster']
+        ).interactive()
+        st.write(chart)
+
         # Descargar datos
         if st.button('Descargar CSV'):
             tmp_download_link = download_link_csv(data, 'data.csv', 'Haz clic aquí para descargar en CSV')
