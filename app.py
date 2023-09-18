@@ -149,6 +149,7 @@ if 'data' in locals():
         df_metrics['cluster'] = kmeans.fit_predict(scaled_data)
 
         # Métricas de Evaluación
+        # Métricas de Evaluación
         st.subheader('Métricas de Evaluación del Modelo')
         silhouette = silhouette_score(scaled_data, df_metrics['cluster'])
         inertia = kmeans.inertia_
@@ -156,22 +157,13 @@ if 'data' in locals():
         st.write(f'Inercia: {inertia:.2f}')
 
         pca = PCA(2)
-        pca_result = pca.fit_transform(scaled_data)
-        df_metrics['pca_1'] = pca_result[:,0]
-        df_metrics['pca_2'] = pca_result[:,1]
+        pca_results = pca.fit_transform(scaled_data)
+        df_metrics['pca-1'] = pca_results[:, 0]
+        df_metrics['pca-2'] = pca_results[:, 1]
 
-        plt.figure(figsize=(10, 6))
-        sns.scatterplot(x='pca1', y='pca2', hue='cluster', data=df_metrics, palette='deep', alpha=0.7, edgecolor=None)
-        plt.title('Visualización de Clusters en 2D usando PCA')
-        st.pyplot()
-
-        chart = alt.Chart(df_metrics).mark_circle(size=60).encode(
-            x='pca_1',
-            y='pca_2',
-            color='cluster:N',
-            tooltip=['ROE', 'ROA', 'EBITDA']
-        ).interactive()
-        st.altair_chart(chart)
+        fig, ax = plt.subplots()
+        sns.scatterplot(x='pca-1', y='pca-2', hue='cluster', data=df_metrics, ax=ax, palette="deep", s=100)
+        st.pyplot(fig)
 
         # Mapa de Calor
         st.subheader("Mapa de Calor para las Métricas")
