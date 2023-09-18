@@ -36,7 +36,10 @@ except Exception as e:
 
 # Si los datos se cargaron, visualizar un histograma
 if 'data' in locals():
-    column_to_plot = st.selectbox('Selecciona una columna para visualizar', data.columns)
+    metrics = ['ROE', 'ROA', 'EBITDA', 'APALANCAMIENTO', 'ACTIVOS', 'PASIVOS', 'PATRIMONIO', 
+               'INGRESOS DE ACTIVIDADES ORDINARIAS', 'GANANCIA BRUTA', 'GANANCIA (PÉRDIDA) POR ACTIVIDADES DE OPERACIÓN', 'GANANCIA (PÉRDIDA)']
+    
+    column_to_plot = st.selectbox('Selecciona una métrica para visualizar', metrics)
     if pd.api.types.is_numeric_dtype(data[column_to_plot]):
         histogram = alt.Chart(data).mark_bar().encode(
             alt.X(column_to_plot, bin=True),
@@ -47,6 +50,10 @@ if 'data' in locals():
         )
         st.altair_chart(histogram)
     else:
-        st.write(f"La columna {column_to_plot} no es numérica y no puede visualizarse como histograma.")
+        st.write(f"La métrica {column_to_plot} no es numérica y no puede visualizarse como histograma.")
 
-# Ejecuta este script con "streamlit run <nombre_del_archivo>.py"
+# Instrucciones para ejecutar:
+# 1. Guarda este código en un archivo, por ejemplo "app.py".
+# 2. En tu terminal o línea de comandos, navega al directorio donde guardaste el archivo.
+# 3. Ejecuta el comando: streamlit run app.py
+
