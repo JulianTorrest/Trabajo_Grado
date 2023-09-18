@@ -158,7 +158,12 @@ if 'data' in locals():
         pca_result = pca.fit_transform(scaled_data)
         df_metrics['pca_1'] = pca_result[:,0]
         df_metrics['pca_2'] = pca_result[:,1]
-        
+
+        plt.figure(figsize=(10, 6))
+        sns.scatterplot(x='pca1', y='pca2', hue='cluster', data=df_metrics, palette='deep', alpha=0.7, edgecolor=None)
+        plt.title('Visualización de Clusters en 2D usando PCA')
+        st.pyplot()
+
         chart = alt.Chart(df_metrics).mark_circle(size=60).encode(
             x='pca_1',
             y='pca_2',
