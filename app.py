@@ -149,7 +149,6 @@ if 'data' in locals():
         df_metrics['cluster'] = kmeans.fit_predict(scaled_data)
 
         # Métricas de Evaluación
-        # Métricas de Evaluación
         st.subheader('Métricas de Evaluación del Modelo')
         silhouette = silhouette_score(scaled_data, df_metrics['cluster'])
         inertia = kmeans.inertia_
@@ -158,33 +157,32 @@ if 'data' in locals():
 
         pca = PCA(2)
         pca_results = pca.fit_transform(scaled_data)
-        df_metrics['pca-1'] = pca_results[:, 0]
-        df_metrics['pca-2'] = pca_results[:, 1]
+        df_metrics['pca1'] = pca_results[:, 0]
+        df_metrics['pca2'] = pca_results[:, 1]
 
-        fig, ax = plt.subplots()
-        sns.scatterplot(x='pca-1', y='pca-2', hue='cluster', data=df_metrics, ax=ax, palette="deep", s=100)
-        st.pyplot(fig)
-
-        # Mapa de Calor
-        st.subheader("Mapa de Calor para las Métricas")
-        correlation = df_metrics[metrics].corr()
-        fig, ax = plt.subplots(figsize=(10,8))
-        sns.heatmap(correlation, annot=True, cmap='coolwarm', ax=ax)
-        st.pyplot(fig)
-
-        st.subheader('**Visualización de Clusters**')
-        chart = alt.Chart(df_pca).mark_circle(size=60).encode(
-            x='PC1',
-            y='PC2',
+        st.subheader('Visualización de Clusters en 2D con PCA')
+        chart = alt.Chart(df_metrics).mark_circle(size=60).encode(
+            x='pca1',
+            y='pca2',
             color=alt.Color('cluster:N', scale=alt.Scale(scheme='category10')),
-            tooltip=['PC1', 'PC2', 'cluster']
+            tooltip=['cluster', 'ROE', 'ROA', 'EBITDA', 'APALANCAMIENTO']
         ).interactive()
-        st.write(chart)
+        st.altair_chart(chart, use_container_width=True)
 
-        # Descargar datos
-        if st.button('Descargar CSV'):
-            tmp_download_link = download_link_csv(data, 'data.csv', 'Haz clic aquí para descargar en CSV')
-            st.markdown(tmp_download_link, unsafe_allow_html=True)
+        # Descargar el dataset con información del cluster
+        st.markdown(download_link_csv(df_metrics, 'data_with_clusters.csv', 'Descargar CSV con Clusters'), unsafe_allow_html=True)
+
+        # Despliegue de datos por cluster
+        st.subheader('Resumen por Cluster')
+        summary = df_metrics.groupby('cluster').mean()
+        st.write(summary)
+
+except Exception as e:
+    st.write("Hubo un error al procesar los datos.")
+    st.write(e)
+
+if __name__ == "__main__":
+
 
 
 # Para ejecutar el código:
