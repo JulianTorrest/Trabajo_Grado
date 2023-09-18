@@ -127,13 +127,14 @@ if 'data' in locals():
         if razon_social:
             data = data[data['RAZÓN SOCIAL'].isin(razon_social)]
         if subsector:
-            data = data[data['SUBSECTOR'].isin(subsector)]
+            data = data[data['SUBSECTOR'] == subsector] # Corregido el filtro
         if sector:
-            data = data[data['SECTOR'].isin(sector)]
+            data = data[data['SECTOR'] == sector] # Corregido el filtro
         if macrosector:
             data = data[data['MACROSECTOR'] == macrosector]
-        
+
         st.write(data.head())
+
 
         # Clustering
         metrics = ['ROE', 'ROA', 'EBITDA', 'APALANCAMIENTO', 'ACTIVOS', 'PASIVOS', 'PATRIMONIO', 
