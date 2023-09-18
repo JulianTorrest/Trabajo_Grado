@@ -4,3 +4,5 @@ scikit-learn
 gspread
 oauth2client
 altair
+seaborn
+matplotlib 
