@@ -45,7 +45,14 @@ if 'data' in locals():
     st.subheader('Seleccionar Información')
     razon_social = st.multiselect('RAZÓN SOCIAL', data['RAZÓN SOCIAL'].unique())
     subsector = st.multiselect('SUBSECTOR', data['SUBSECTOR'].unique())
-    sector = st.multiselect('SECTOR', data['SECTOR'].unique())
+    sector_options = ["", 
+                      "EXPLOTACIÓN DE MINAS Y CANTERAS", 
+                      "INDUSTRIAS MANUFACTURERAS", 
+                      "CONSTRUCCIÓN", 
+                      "COMERCIO AL POR MAYOR Y AL POR MENOR; REPARACIÓN DE VEHÍCULOS AUTOMOTORES Y MOTOCICLETAS", 
+                      "AGRICULTURA, GANADERÍA, CAZA, SILVICULTURA Y PESCA"]
+    sector = st.selectbox('SECTOR', sector_options)
+
     macrosector = st.selectbox('MACROSECTOR', ["", "MINERÍA", "MANUFACTURERO", "CONSTRUCCIÓN", "COMERCIO", "AGROPECUARIO"])
 
     if st.button('Ejecutar'):
