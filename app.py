@@ -157,6 +157,20 @@ if 'data' in locals():
 
         pca = PCA(2)
         pca_results = pca.fit_transform(scaled_data)
+
+        # Visualización con PCA (esta parte faltaba en tu código)
+        df_pca = pd.DataFrame(data=pca_results, columns=['PC1', 'PC2'])
+        df_pca['cluster'] = df_metrics['cluster']
+
+        chart = alt.Chart(df_pca).mark_point().encode(
+            x='PC1',
+            y='PC2',
+            color='cluster:N',
+            tooltip=['PC1', 'PC2', 'cluster']
+        ).interactive()
+
+        st.write(chart)
+
         df_metrics['pca1'] = pca_results[:, 0]
         df_metrics['pca2'] = pca_results[:, 1]
 
@@ -182,12 +196,3 @@ except Exception as e:
     st.write(e)
 
 if __name__ == "__main__":
-
-
-
-# Para ejecutar el código:
-# 1. Guarda este código en un archivo, por ejemplo "app.py".
-# 2. Instala las dependencias con pip.
-# 3. Ejecuta el comando: streamlit run app.py
-
-
