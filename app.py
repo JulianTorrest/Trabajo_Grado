@@ -159,13 +159,17 @@ st.pyplot()
 
 # Seleccionar características para análisis
 st.subheader('Selecciona características para análisis')
-features = st.multiselect('Selecciona características', df_metrics.columns[:-1], default=df_metrics.columns[:-1])
-if not features:
-        st.warning("Por favor, selecciona al menos una característica para continuar.")
-        return
+features = st.multiselect(
+    'Selecciona características', 
+    df_metrics.columns[:-1], 
+    default=df_metrics.columns[:-1]
+)
 
-scaled_data_feature_selected = StandardScaler().fit_transform(df_metrics[features])
-df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
+if not features:
+    st.warning("Por favor, selecciona al menos una característica para continuar.")
+else:
+    scaled_data_feature_selected = StandardScaler().fit_transform(df_metrics[features])
+    df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
 
 # Mostrar registros del cluster seleccionado
 st.subheader(f'Registros del Cluster {selected_cluster}')
