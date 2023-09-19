@@ -417,5 +417,5 @@ if show_histogram:
 	# Final de la aplicación
         st.write("Gracias por usar la aplicación. Si tienes más preguntas o comentarios, ¡no dudes en compartirlos!")
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
