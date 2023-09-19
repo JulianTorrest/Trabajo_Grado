@@ -236,12 +236,13 @@ selected_cluster = st.selectbox('Selecciona un cluster para visualizar', cluster
 st.write(df_metrics[df_metrics['cluster'] == selected_cluster].head(num_records))
 
 # Estadísticas descriptivas por cluster
-	st.subheader('Estadísticas Descriptivas por Cluster')
-	show_statistics = st.checkbox('Mostrar estadísticas descriptivas')
-    
-	if show_statistics:
-		cluster_selection = st.selectbox('Elige un cluster para ver sus estadísticas:', range(num_clusters))
-		st.write(df[df_metrics['cluster'] == cluster_selection].describe())
+st.subheader('Estadísticas Descriptivas por Cluster')
+show_statistics = st.checkbox('Mostrar estadísticas descriptivas')
+
+if show_statistics:
+    cluster_selection = st.selectbox('Elige un cluster para ver sus estadísticas:', range(num_clusters))
+    st.write(df[df_metrics['cluster'] == cluster_selection].describe())
+
 
 # Visualización de histograma por característica y cluster
 st.subheader('Histograma por Característica y Cluster')
