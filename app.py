@@ -196,9 +196,9 @@ def elbow_method(data, max_clusters=15):
         distortions = []
         K = range(1, max_clusters)
         for k in K:
-        kmeanModel = KMeans(n_clusters=k)
-        kmeanModel.fit(data)
-        distortions.append(kmeanModel.inertia_)
+        	kmeanModel = KMeans(n_clusters=k)
+        	kmeanModel.fit(data)
+        	distortions.append(kmeanModel.inertia_)
             
         plt.figure(figsize=(10, 6))
         plt.plot(K, distortions, 'bx-')
