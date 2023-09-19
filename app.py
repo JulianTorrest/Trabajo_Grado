@@ -15,6 +15,9 @@ from sklearn.manifold import TSNE
 from sklearn.metrics import silhouette_samples
 import os
 
+# Define df_metrics a nivel global (fuera de cualquier función)
+df_metrics = None  # O puedes inicializarlo con None
+
 # Función para obtener datos desde Google Sheets
 def get_data_from_gsheets(sheet_url):
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/spreadsheets',
@@ -37,6 +40,7 @@ st.title('Análisis Exploratorio de Datos y Clustering desde Google Sheets')
 url = "https://docs.google.com/spreadsheets/d/1r4YcJuh5Qvp9_Z9D4soEyZymZD6tGTYBqqevXTIT6AQ/edit#gid=0"
 
 def main():
+    global df_metrics
     try:
         data = get_data_from_gsheets(url)
         st.write("Datos cargados exitosamente!")
