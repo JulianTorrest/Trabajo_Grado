@@ -19,7 +19,7 @@ import os
 def get_data_from_gsheets(sheet_url):
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/spreadsheets',
              'https://www.googleapis.com/auth/drive']
-    creds = ServiceAccountCredentials.from_json_keyfile_name('path_to_credentials.json', scope)  # Reemplazar por la ruta correcta
+    creds = ServiceAccountCredentials.from_json_keyfile_name('https://github.com/JulianTorrest/Trabajo_Grado/blob/main/path_to_credentials.json', scope)  # Reemplazar por la ruta correcta
     client = gspread.authorize(creds)
     sheet = client.open_by_url(sheet_url).sheet1
     data = sheet.get_all_records()
