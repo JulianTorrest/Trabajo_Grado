@@ -413,12 +413,8 @@ if show_histogram:
     for cluster, count in cluster_counts.iteritems():
         st.write(f'**Cluster {cluster}:** {count} registros')
 
-
-	    # Final de la aplicación
+	# Final de la aplicación
         st.write("Gracias por usar la aplicación. Si tienes más preguntas o comentarios, ¡no dudes en compartirlos!")
-
-    except Exception as e:
-        st.error(f'Ocurrió un error al procesar el archivo: {e}')
 
 if __name__ == "__main__":
     main()
