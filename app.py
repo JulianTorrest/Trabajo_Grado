@@ -178,9 +178,9 @@ if show_elbow:
         distortions = []
         K = range(1, 15)
         for k in K:
-        kmeanModel = KMeans(n_clusters=k)
-        kmeanModel.fit(scaled_data_feature_selected)
-        distortions.append(kmeanModel.inertia_)
+ 		kmeanModel = KMeans(n_clusters=k)
+        	kmeanModel.fit(scaled_data_feature_selected)
+        	distortions.append(kmeanModel.inertia_)
 
         plt.figure(figsize=(10, 6))
         plt.plot(K, distortions, 'bx-')
