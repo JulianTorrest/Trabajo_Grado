@@ -110,9 +110,6 @@ def elbow_method(data, max_clusters=15):
     plt.title('Método del Codo para determinar k óptimo')
     st.pyplot()
 
-	elbow_method(scaled_data_feature_selected)
-
-
         # Selección del número de clusters
         num_clusters = st.slider('Selecciona el número de clusters', 1, 10, 3)
         kmeans = KMeans(n_clusters=num_clusters)
