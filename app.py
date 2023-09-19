@@ -232,6 +232,7 @@ else:
     # Asegurar la definición de scaled_data
     scaled_data_feature_selected = StandardScaler().fit_transform(df_metrics[features])
     df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
+
         
 # Definir num_clusters fuera del bloque condicional
 num_clusters = 3  # Puedes establecer un valor predeterminado
