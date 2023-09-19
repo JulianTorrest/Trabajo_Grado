@@ -44,13 +44,10 @@ data = load_data()
 data = data.reset_index(drop=True)
 
 st.title('Análisis Exploratorio de Datos y Clustering desde Google Sheets')
-url = "https://docs.google.com/spreadsheets/d/1r4YcJuh5Qvp9_Z9D4soEyZymZD6tGTYBqqevXTIT6AQ/edit#gid=0"
 
 def main():
-    global df_metrics
-    global data
     try:
-        data = get_data_from_gsheets(url)
+        data = get_csv_from_github(TOKEN, REPO_PATH)
         st.write("Datos cargados exitosamente!")
         st.write(data.head())
     except Exception as e:
