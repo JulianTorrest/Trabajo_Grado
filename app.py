@@ -151,74 +151,74 @@ if 'data' in locals():
             scaled_data_feature_selected = StandardScaler().fit_transform(df_metrics[features])
             df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
 
-	# Mostrar registros del cluster seleccionado
-	st.subheader(f'Registros del Cluster {selected_cluster}')
-	num_records = st.slider("Selecciona el número de registros a visualizar", 1, 50, 10)
-	st.write(df_metrics[df_metrics['cluster'] == selected_cluster].head(num_records))
+# Mostrar registros del cluster seleccionado
+st.subheader(f'Registros del Cluster {selected_cluster}')
+num_records = st.slider("Selecciona el número de registros a visualizar", 1, 50, 10)
+st.write(df_metrics[df_metrics['cluster'] == selected_cluster].head(num_records))
 
-	# Determinar el número óptimo de clusters usando el método del codo
-	st.subheader('Determinar el Número Óptimo de Clusters')
-	show_elbow = st.checkbox('Mostrar gráfico del método del codo')
-	if show_elbow:
-	    distortions = []
-	    K = range(1, 15)
-	    for k in K:
-	        kmeanModel = KMeans(n_clusters=k)
-	        kmeanModel.fit(scaled_data_feature_selected)
-	        distortions.append(kmeanModel.inertia_)
+# Determinar el número óptimo de clusters usando el método del codo
+st.subheader('Determinar el Número Óptimo de Clusters')
+show_elbow = st.checkbox('Mostrar gráfico del método del codo')
+if show_elbow:
+    distortions = []
+    K = range(1, 15)
+    for k in K:
+        kmeanModel = KMeans(n_clusters=k)
+        kmeanModel.fit(scaled_data_feature_selected)
+        distortions.append(kmeanModel.inertia_)
 
-	    plt.figure(figsize=(10, 6))
-	    plt.plot(K, distortions, 'bx-')
-	    plt.xlabel('k')
-	    plt.ylabel('Distorsión')
-	    plt.title('Método del Codo para determinar k óptimo')
-	    st.pyplot()
+    plt.figure(figsize=(10, 6))
+    plt.plot(K, distortions, 'bx-')
+    plt.xlabel('k')
+    plt.ylabel('Distorsión')
+    plt.title('Método del Codo para determinar k óptimo')
+    st.pyplot()
 
-	# Dejar al usuario seleccionar el número de clusters
-	num_clusters = st.slider('Selecciona el número de clusters', 1, 15, 5)
-	kmeans = KMeans(n_clusters=num_clusters)
-	df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
+# Dejar al usuario seleccionar el número de clusters
+num_clusters = st.slider('Selecciona el número de clusters', 1, 15, 5)
+kmeans = KMeans(n_clusters=num_clusters)
+df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
 
-	# Mostrar la distribución de registros por cluster
-	st.subheader('Distribución de Registros por Cluster')
-	st.bar_chart(df_metrics['cluster'].value_counts())
+# Mostrar la distribución de registros por cluster
+st.subheader('Distribución de Registros por Cluster')
+st.bar_chart(df_metrics['cluster'].value_counts())
 
-	# Seleccionar un cluster para mostrar sus registros
-	cluster_options = list(range(num_clusters))
-	selected_cluster = st.selectbox('Selecciona un cluster para visualizar', cluster_options)
-	st.write(df_metrics[df_metrics['cluster'] == selected_cluster].head(num_records))
+# Seleccionar un cluster para mostrar sus registros
+cluster_options = list(range(num_clusters))
+selected_cluster = st.selectbox('Selecciona un cluster para visualizar', cluster_options)
+st.write(df_metrics[df_metrics['cluster'] == selected_cluster].head(num_records))
 
-	# Determinar el número óptimo de clusters usando el método del codo
-	st.subheader('Determinar el Número Óptimo de Clusters')
-	show_elbow = st.checkbox('Mostrar gráfico del método del codo')
-	if show_elbow:
-	    distortions = []
-	    K = range(1, 15)
-	    for k in K:
-	        kmeanModel = KMeans(n_clusters=k)
-	        kmeanModel.fit(scaled_data_feature_selected)
-	        distortions.append(kmeanModel.inertia_)
+# Determinar el número óptimo de clusters usando el método del codo
+st.subheader('Determinar el Número Óptimo de Clusters')
+show_elbow = st.checkbox('Mostrar gráfico del método del codo')
+if show_elbow:
+    distortions = []
+    K = range(1, 15)
+    for k in K:
+        kmeanModel = KMeans(n_clusters=k)
+        kmeanModel.fit(scaled_data_feature_selected)
+        distortions.append(kmeanModel.inertia_)
 
-	    plt.figure(figsize=(10, 6))
-	    plt.plot(K, distortions, 'bx-')
-	    plt.xlabel('k')
-	    plt.ylabel('Distorsión')
-	    plt.title('Método del Codo para determinar k óptimo')
-	    st.pyplot()
+    plt.figure(figsize=(10, 6))
+    plt.plot(K, distortions, 'bx-')
+    plt.xlabel('k')
+    plt.ylabel('Distorsión')
+    plt.title('Método del Codo para determinar k óptimo')
+    st.pyplot()
 
-	# Dejar al usuario seleccionar el número de clusters
-	num_clusters = st.slider('Selecciona el número de clusters', 1, 15, 5)
-	kmeans = KMeans(n_clusters=num_clusters)
-	df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
+# Dejar al usuario seleccionar el número de clusters
+num_clusters = st.slider('Selecciona el número de clusters', 1, 15, 5)
+kmeans = KMeans(n_clusters=num_clusters)
+df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
 
-	# Mostrar la distribución de registros por cluster
-	st.subheader('Distribución de Registros por Cluster')
-	st.bar_chart(df_metrics['cluster'].value_counts())
+# Mostrar la distribución de registros por cluster
+st.subheader('Distribución de Registros por Cluster')
+st.bar_chart(df_metrics['cluster'].value_counts())
 
-	# Seleccionar un cluster para mostrar sus registros
-	cluster_options = list(range(num_clusters))
-	selected_cluster = st.selectbox('Selecciona un cluster para visualizar', cluster_options)
-	st.write(df_metrics[df_metrics['cluster'] == selected_cluster].head(num_records))
+# Seleccionar un cluster para mostrar sus registros
+cluster_options = list(range(num_clusters))
+selected_cluster = st.selectbox('Selecciona un cluster para visualizar', cluster_options)
+st.write(df_metrics[df_metrics['cluster'] == selected_cluster].head(num_records))
 
 # Estadísticas descriptivas por cluster
 st.subheader('Estadísticas Descriptivas por Cluster')
