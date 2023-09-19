@@ -115,59 +115,43 @@ if 'data' in locals():
         kmeans = KMeans(n_clusters=num_clusters)
         df_metrics['cluster'] = kmeans.fit_predict(scaled_data)
 
-# Centroides para la visualización
-cluster_centers_pca = pca.transform(kmeans.cluster_centers_)
+        # Centroides para la visualización
+        cluster_centers_pca = pca.transform(kmeans.cluster_centers_)
 
-# Actualizar el dataframe PCA con los clusters
-df_pca['cluster'] = df_metrics['cluster']
+        # Actualizar el dataframe PCA con los clusters
+        df_pca['cluster'] = df_metrics['cluster']
 
-# Visualización de clusters con centroides
-base = alt.Chart(df_pca).mark_circle(size=60).encode(
-        x='PC 1',
-        y='PC 2',
-        color='cluster:O',
-        tooltip=['PC 1', 'PC 2', 'cluster']
-).interactive()
+        # Información detallada del cluster seleccionado
+        selected_cluster = st.selectbox('Selecciona un cluster para ver detalles', list(range(num_clusters)))
 
-centroids = alt.Chart(pd.DataFrame(cluster_centers_pca, columns=['PC 1', 'PC 2'])).mark_circle(size=100, color='black').encode(
-        x='PC 1',
-        y='PC 2',
-).interactive()
+        st.write(df_metrics[df_metrics['cluster'] == selected_cluster].describe())
 
-st.altair_chart(base + centroids, use_container_width=True)
+        # Enlace para descargar el dataset con clusters
+        if st.button('Descargar datos con clusters'):
+            st.markdown(download_link_csv(df_metrics, 'data_with_clusters.csv', 'Click aquí para descargar los datos con clusters!'), unsafe_allow_html=True)
 
-# Información detallada del cluster seleccionado
-selected_cluster = st.selectbox('Selecciona un cluster para ver detalles', list(range(num_clusters)))
-st.write(df_metrics[df_metrics['cluster'] == selected_cluster].describe())
+        # Silhouette Score
+        st.subheader('Silhouette Score por Cluster')
+        silhouette_scores = silhouette_samples(scaled_data, df_metrics['cluster'])
+        df_metrics['silhouette_score'] = silhouette_scores
 
-# Enlace para descargar el dataset con clusters
-if st.button('Descargar datos con clusters'):
-        st.markdown(download_link_csv(df_metrics, 'data_with_clusters.csv', 'Click aquí para descargar los datos con clusters!'), unsafe_allow_html=True)
+        # Visualizar silhouette score
+        plt.figure(figsize=(10, 6))
+        sns.boxplot(x=df_metrics['cluster'], y=df_metrics['silhouette_score'])
+        plt.title('Silhouette Score por Cluster')
+        st.pyplot()
 
-# Silhouette Score
-st.subheader('Silhouette Score por Cluster')
-silhouette_scores = silhouette_samples(scaled_data, df_metrics['cluster'])
-df_metrics['silhouette_score'] = silhouette_scores
+        # Seleccionar características para análisis
+        st.subheader('Selecciona características para análisis')
+        features = st.multiselect('Selecciona características', df_metrics.columns[:-1], default=df_metrics.columns[:-1])
+        if not features:
+            st.warning("Por favor, selecciona al menos una característica para continuar.")
 
-# Visualizar silhouette score
-plt.figure(figsize=(10, 6))
-sns.boxplot(x=df_metrics['cluster'], y=df_metrics['silhouette_score'])
-plt.title('Silhouette Score por Cluster')
-st.pyplot()
+            # Asegurar la definición de scaled_data
+            scaled_data_feature_selected = StandardScaler().fit_transform(df_metrics[features])
+            df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
 
-# Seleccionar características para análisis
-st.subheader('Selecciona características para análisis')
-features = st.multiselect(
-    'Selecciona características', 
-    df_metrics.columns[:-1], 
-    default=df_metrics.columns[:-1]
-)
 
-if not features:
-    st.warning("Por favor, selecciona al menos una característica para continuar.")
-else:
-    scaled_data_feature_selected = StandardScaler().fit_transform(df_metrics[features])
-    df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
 
 # Mostrar registros del cluster seleccionado
 st.subheader(f'Registros del Cluster {selected_cluster}')
