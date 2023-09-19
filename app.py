@@ -121,11 +121,6 @@ if 'data' in locals():
         # Actualizar el dataframe PCA con los clusters
         df_pca['cluster'] = df_metrics['cluster']
 
-        # Información detallada del cluster seleccionado
-        selected_cluster = st.selectbox('Selecciona un cluster para ver detalles', list(range(num_clusters)))
-
-        st.write(df_metrics[df_metrics['cluster'] == selected_cluster].describe())
-
         # Enlace para descargar el dataset con clusters
         if st.button('Descargar datos con clusters'):
             st.markdown(download_link_csv(df_metrics, 'data_with_clusters.csv', 'Click aquí para descargar los datos con clusters!'), unsafe_allow_html=True)
@@ -150,6 +145,10 @@ if 'data' in locals():
             # Asegurar la definición de scaled_data
             scaled_data_feature_selected = StandardScaler().fit_transform(df_metrics[features])
             df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
+        
+# Información detallada del cluster seleccionado
+selected_cluster = st.selectbox('Selecciona un cluster para ver detalles', list(range(num_clusters)))
+st.write(df_metrics[df_metrics['cluster'] == selected_cluster].describe())
 
 # Mostrar registros del cluster seleccionado
 st.subheader(f'Registros del Cluster {selected_cluster}')
