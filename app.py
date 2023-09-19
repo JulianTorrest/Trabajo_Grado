@@ -156,42 +156,42 @@ else:
     	st.warning("No se pudo cargar el DataFrame df_metrics correctamente.")
 
 	    
-	num_clusters = st.slider("Selecciona el número de clusters", 2, 10, 3)
-        df_metrics = data[metrics].dropna()  # Eliminar filas con NaN
-        scaler = StandardScaler()
-        scaled_data = scaler.fit_transform(df_metrics)
+num_clusters = st.slider("Selecciona el número de clusters", 2, 10, 3)
+df_metrics = data[metrics].dropna()  # Eliminar filas con NaN
+scaler = StandardScaler()
+scaled_data = scaler.fit_transform(df_metrics)
 
-        kmeans = KMeans(n_clusters=num_clusters, random_state=42)
-        df_metrics['cluster'] = kmeans.fit_predict(scaled_data)
+kmeans = KMeans(n_clusters=num_clusters, random_state=42)
+df_metrics['cluster'] = kmeans.fit_predict(scaled_data)
 
-        # Métricas de Evaluación
-        st.subheader('Métricas de Evaluación del Modelo')
-        silhouette = silhouette_score(scaled_data, df_metrics['cluster'])
-        inertia = kmeans.inertia_
-        st.write(f'Coeficiente de silueta: {silhouette:.2f}')
-        st.write(f'Inercia: {inertia:.2f}')  
+# Métricas de Evaluación
+st.subheader('Métricas de Evaluación del Modelo')
+silhouette = silhouette_score(scaled_data, df_metrics['cluster'])
+inertia = kmeans.inertia_
+st.write(f'Coeficiente de silueta: {silhouette:.2f}')
+st.write(f'Inercia: {inertia:.2f}')  
 
-        # Reducción de dimensionalidad con PCA
-        pca = PCA(n_components=2)
-        principal_components = pca.fit_transform(scaled_data)
-        df_pca = pd.DataFrame(data=principal_components, columns=['PC 1', 'PC 2'])
-        df_pca['cluster'] = df_metrics['cluster']
+# Reducción de dimensionalidad con PCA
+pca = PCA(n_components=2)
+principal_components = pca.fit_transform(scaled_data)
+df_pca = pd.DataFrame(data=principal_components, columns=['PC 1', 'PC 2'])
+df_pca['cluster'] = df_metrics['cluster']
 
-        # Visualización de clusters
-        st.subheader('Visualización de Clusters')
+# Visualización de clusters
+st.subheader('Visualización de Clusters')
         
-        chart = alt.Chart(df_pca).mark_circle(size=60).encode(
-            x='PC 1',
-            y='PC 2',
-            color='cluster:O',
-            tooltip=['PC 1', 'PC 2', 'cluster']
-        ).interactive()
+chart = alt.Chart(df_pca).mark_circle(size=60).encode(
+        x='PC 1',
+        y='PC 2',
+        color='cluster:O',
+        tooltip=['PC 1', 'PC 2', 'cluster']
+).interactive()
 
-        st.altair_chart(chart, use_container_width=True)
+st.altair_chart(chart, use_container_width=True)
 
-        # Enlace para descargar el dataset con clusters
-        if st.button('Descargar datos con clusters'):
-            st.markdown(download_link_csv(df_metrics, 'data_with_clusters.csv', 'Click aquí para descargar los datos con clusters!'), unsafe_allow_html=True)
+# Enlace para descargar el dataset con clusters
+if st.button('Descargar datos con clusters'):
+st.markdown(download_link_csv(df_metrics, 'data_with_clusters.csv', 'Click aquí para descargar los datos con clusters!'), unsafe_allow_html=True)
 
         # Método del codo para determinar el número óptimo de clusters
         st.subheader('Determinación del número óptimo de clusters: Método del Codo')
