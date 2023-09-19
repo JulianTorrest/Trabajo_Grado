@@ -223,15 +223,15 @@ if 'data' in locals():
         plt.title('Silhouette Score por Cluster')
         st.pyplot()
 
-# Seleccionar características para análisis
-st.subheader('Selecciona características para análisis')
-features = st.multiselect('Selecciona características', df_metrics.columns[:-1], default=df_metrics.columns[:-1])
-if not features:
-    st.warning("Por favor, selecciona al menos una característica para continuar.")
-else:
-    # Asegurar la definición de scaled_data
-    scaled_data_feature_selected = StandardScaler().fit_transform(df_metrics[features])
-    df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
+	# Seleccionar características para análisis
+	st.subheader('Selecciona características para análisis')
+	features = st.multiselect('Selecciona características', df_metrics.columns[:-1], default=df_metrics.columns[:-1])
+	if not features:
+    		st.warning("Por favor, selecciona al menos una característica para continuar.")
+	else:
+		# Asegurar la definición de scaled_data
+    		scaled_data_feature_selected = StandardScaler().fit_transform(df_metrics[features])
+    		df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
         
 # Definir num_clusters fuera del bloque condicional
 num_clusters = 3  # Puedes establecer un valor predeterminado
