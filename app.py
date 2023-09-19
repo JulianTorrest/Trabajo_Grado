@@ -46,13 +46,98 @@ def main():
         st.write(e)
 
 if 'data' in locals():
-    # (Resto del código de selección y filtrado)
-# Agregar botones de selección para el MACROSECTOR y el SECTOR
-macrosector = st.radio('Selecciona el MACROSECTOR', ['MINERÍA', 'MANUFACTURERO', 'CONSTRUCCIÓN', 'COMERCIO', 'AGROPECUARIO'])
-sector = st.radio('Selecciona el SECTOR', ['EXPLOTACIÓN DE MINAS Y CANTERAS', 'INDUSTRIAS MANUFACTURERAS', 'CONSTRUCCIÓN', 'COMERCIO AL POR MAYOR Y AL POR MENOR; REPARACIÓN DE VEHÍCULOS AUTOMOTORES Y MOTOCICLETAS', 'AGRICULTURA, GANADERÍA, CAZA, SILVICULTURA Y PESCA'])
-    if st.button('Ejecutar'):
-        # (Resto del código de filtrado)
+    st.subheader('Seleccionar Información')
+    razon_social = st.multiselect('RAZÓN SOCIAL', data['RAZÓN SOCIAL'].unique())
+    subsector_options = [
+        "", 
+        "B0910 - ACTIVIDADES DE APOYO PARA LA EXTRACCIÓN DE PETRÓLEO Y DE GAS NATURAL",
+        "B0812 - EXTRACCIÓN DE ARCILLAS DE USO INDUSTRIAL, CALIZA, CAOLÍN Y BENTONITAS",
+        "B0610 - EXTRACCIÓN DE PETRÓLEO CRUDO",
+        "B0620 - EXTRACCIÓN DE GAS NATURAL",
+        "B0510 - EXTRACCIÓN DE HULLA (CARBÓN DE PIEDRA)",
+        "B0722 - EXTRACCIÓN DE ORO Y OTROS METALES PRECIOSOS",
+        "B0811 - EXTRACCIÓN DE PIEDRA, ARENA, ARCILLAS COMUNES, YESO Y ANHIDRITA",
+        "B0820 - EXTRACCIÓN DE ESMERALDAS, PIEDRAS PRECIOSAS Y SEMIPRECIOSAS",
+        "B0729 - EXTRACCIÓN DE OTROS MINERALES METALÍFEROS NO FERROSOS N.C.P.",
+        "B0990 - ACTIVIDADES DE APOYO PARA OTRAS ACTIVIDADES DE EXPLOTACIÓN DE MINAS Y CANTERAS",
+        "B0723 - EXTRACCIÓN DE MINERALES DE NÍQUEL",
+        "B0899 - EXTRACCIÓN DE OTROS MINERALES NO METÁLICOS N.C.P.",
+        "B0892 - EXTRACCIÓN DE HALITA (SAL)",
+        "B0891 - EXTRACCIÓN DE MINERALES PARA LA FABRICACIÓN DE ABONOS Y PRODUCTOS QUÍMICOS",
+        "B0710 - EXTRACCIÓN DE MINERALES DE HIERRO",
+        "C3250 - FABRICACIÓN DE INSTRUMENTOS, APARATOS Y MATERIALES MÉDICOS Y ODONTOLÓGICOS (INCLUIDO MOBILIARIO)",
+        "C1030 - ELABORACIÓN DE ACEITES Y GRASAS DE ORIGEN VEGETAL Y ANIMAL",
+        "C1410 - CONFECCIÓN DE PRENDAS DE VESTIR, EXCEPTO PRENDAS DE PIEL",
+        "C1051 - ELABORACIÓN DE PRODUCTOS DE MOLINERÍA",
+        "C2229 - FABRICACIÓN DE ARTÍCULOS DE PLÁSTICO N.C.P.",
+        "C1709 - FABRICACIÓN DE OTROS ARTÍCULOS DE PAPEL Y CARTÓN",
+        "C2930 - FABRICACIÓN DE PARTES, PIEZAS (AUTOPARTES) Y ACCESORIOS (LUJOS) PARA VEHÍCULOS AUTOMOTORES",
+        "C2011 - FABRICACIÓN DE SUSTANCIAS Y PRODUCTOS QUÍMICOS BÁSICOS",
+        "C1011 - PROCESAMIENTO Y CONSERVACIÓN DE CARNE Y PRODUCTOS CÁRNICOS",
+        "C1089 - ELABORACIÓN DE OTROS PRODUCTOS ALIMENTICIOS N.C.P.",
+        "C1811 - ACTIVIDADES DE IMPRESIÓN",
+        "C2599 - FABRICACIÓN DE OTROS PRODUCTOS ELABORADOS DE METAL N.C.P.",
+        "C2100 - FABRICACIÓN DE PRODUCTOS FARMACÉUTICOS, SUSTANCIAS QUÍMICAS MEDICINALES Y PRODUCTOS BOTÁNICOS DE USO FARMACÉUTICO",
+        "C3091 - FABRICACIÓN DE MOTOCICLETAS",
+        "C2395 - FABRICACIÓN DE ARTÍCULOS DE HORMIGÓN, CEMENTO Y YESO",
+        "C2221 - FABRICACIÓN DE FORMAS BÁSICAS DE PLÁSTICO",
+        "C1812 - ACTIVIDADES DE SERVICIOS RELACIONADOS CON LA IMPRESIÓN",
+        "C2029 - FABRICACIÓN DE OTROS PRODUCTOS QUÍMICOS N.C.P.",
+        "C1311 - PREPARACIÓN E HILATURA DE FIBRAS TEXTILES",
+        "C1522 - FABRICACIÓN DE OTROS TIPOS DE CALZADO, EXCEPTO CALZADO DE CUERO Y PIEL",
+        "C2750 - FABRICACIÓN DE APARATOS DE USO DOMÉSTICO",
+        "C1392 - CONFECCIÓN DE ARTÍCULOS CON MATERIALES TEXTILES, EXCEPTO PRENDAS DE VESTIR",
+        "C3011 - CONSTRUCCIÓN DE BARCOS Y DE ESTRUCTURAS FLOTANTES",
+        "C1090 - ELABORACIÓN DE ALIMENTOS PREPARADOS PARA ANIMALES",
+        "C2593 - FABRICACIÓN DE ARTÍCULOS DE CUCHILLERÍA, HERRAMIENTAS DE MANO Y ARTÍCULOS DE FERRETERÍA",
+        "C2021 - FABRICACIÓN DE PLAGUICIDAS Y OTROS PRODUCTOS QUÍMICOS DE USO AGROPECUARIO",
+        "C2731 - FABRICACIÓN DE HILOS Y CABLES ELÉCTRICOS Y DE FIBRA ÓPTICA",
+        "C1061 - TRILLA DE CAFÉ",
+        "C1040 - ELABORACIÓN DE PRODUCTOS LÁCTEOS",
+        "C1020 - PROCESAMIENTO Y CONSERVACIÓN DE FRUTAS, LEGUMBRES, HORTALIZAS Y TUBÉRCULOS",
+        "C2022 - FABRICACIÓN DE PINTURAS, BARNICES Y REVESTIMIENTOS SIMILARES, TINTAS PARA IMPRESIÓN Y MASILLAS",
+        "C3210 - FABRICACIÓN DE JOYAS, BISUTERÍA Y ARTÍCULOS CONEXOS",
+        "C2829 - FABRICACIÓN DE OTROS TIPOS DE MAQUINARIA Y EQUIPO DE USO ESPECIAL N.C.P.",
+        "C1620 - FABRICACIÓN DE HOJAS DE MADERA PARA ENCHAPADO; FABRICACIÓN DE TABLEROS CONTRACHAPADOS, TABLEROS LAMINADOS, TABLEROS DE PARTÍCULAS Y OTROS TABLEROS Y PANELES",
+        "C1012 - PROCESAMIENTO Y CONSERVACIÓN DE PESCADOS, CRUSTÁCEOS Y MOLUSCOS",
+        "C2410 - INDUSTRIAS BÁSICAS DE HIERRO Y DE ACERO",
+        "C2821 - FABRICACIÓN DE MAQUINARIA AGROPECUARIA Y FORESTAL",
+        "C1104 - ELABORACIÓN DE BEBIDAS NO ALCOHÓLICAS, PRODUCCIÓN DE AGUAS MINERALES Y DE OTRAS AGUAS EMBOTELLADAS",
+        "C1910 - FABRICACIÓN DE PRODUCTOS DE HORNOS DE COQUE",
+        "C1702 - FABRICACIÓN DE PAPEL Y CARTÓN ONDULADO (CORRUGADO); FABRICACIÓN DE ENVASES, EMPAQUES Y DE EMBALAJES DE PAPEL Y CARTÓN.",
+        "C1513 - FABRICACIÓN DE ARTÍCULOS DE VIAJE, BOLSOS DE MANO Y ARTÍCULOS SIMILARES; ARTÍCULOS DE TALABARTERÍA Y GUARNICIONERÍA ELABORADOS EN OTROS MATERIALES",
+        "C3290 - OTRAS INDUSTRIAS MANUFACTURERAS N.C.P.",
+        "C2012 - FABRICACIÓN DE ABONOS Y COMPUESTOS INORGÁNICOS NITROGENADOS",
+        "C2023 - FABRICACIÓN DE JABONES Y DETERGENTES, PREPARADOS PARA LIMPIAR Y PULIR; PERFUMES Y PREPARADOS DE TOCADOR",
+        "C2511 - FABRICACIÓN DE PRODUCTOS METÁLICOS PARA USO ESTRUCTURAL",
+        "C2711 - FABRICACIÓN DE MOTORES, GENERADORES Y TRANSFORMADORES ELÉCTRICOS",
+        "C3110 - FABRICACIÓN DE MUEBLES",
+        "C1921 - FABRICACIÓN DE PRODUCTOS DE LA REFINACIÓN DEL PETRÓLEO",
+        "C1701 - FABRICACIÓN DE PULPAS (PASTAS) CELULÓSICAS; PAPEL Y CARTÓN",
+        "C1313 - ACABADO DE PRODUCTOS TEXTILES"]
+    subsector = st.selectbox('SUBSECTOR', subsector_options)
 
+    sector_options = ["", 
+                      "EXPLOTACIÓN DE MINAS Y CANTERAS", 
+                      "INDUSTRIAS MANUFACTURERAS", 
+                      "CONSTRUCCIÓN", 
+                      "COMERCIO AL POR MAYOR Y AL POR MENOR; REPARACIÓN DE VEHÍCULOS AUTOMOTORES Y MOTOCICLETAS", 
+                      "AGRICULTURA, GANADERÍA, CAZA, SILVICULTURA Y PESCA"]
+    sector = st.selectbox('SECTOR', sector_options)
+
+    macrosector = st.selectbox('MACROSECTOR', ["", "MINERÍA", "MANUFACTURERO", "CONSTRUCCIÓN", "COMERCIO", "AGROPECUARIO"])
+
+    if st.button('Ejecutar'):
+        if razon_social:
+            data = data[data['RAZÓN SOCIAL'].isin(razon_social)]
+        if subsector:
+            data = data[data['SUBSECTOR'] == subsector] # Corregido el filtro
+        if sector:
+            data = data[data['SECTOR'] == sector] # Corregido el filtro
+        if macrosector:
+            data = data[data['MACROSECTOR'] == macrosector]
+
+        st.write(data.head())
         # Clustering
         metrics = ['ROE', 'ROA', 'EBITDA', 'APALANCAMIENTO', 'ACTIVOS', 'PASIVOS', 'PATRIMONIO', 
                    'INGRESOS DE ACTIVIDADES ORDINARIAS', 'GANANCIA BRUTA', 'GANANCIA (PÉRDIDA) POR ACTIVIDADES DE OPERACIÓN', 'GANANCIA (PÉRDIDA)']
@@ -138,15 +223,15 @@ sector = st.radio('Selecciona el SECTOR', ['EXPLOTACIÓN DE MINAS Y CANTERAS', '
         plt.title('Silhouette Score por Cluster')
         st.pyplot()
 
-        # Seleccionar características para análisis
-        st.subheader('Selecciona características para análisis')
-        features = st.multiselect('Selecciona características', df_metrics.columns[:-1], default=df_metrics.columns[:-1])
-        if not features:
-            st.warning("Por favor, selecciona al menos una característica para continuar.")
-
-        # Asegurar la definición de scaled_data
-        scaled_data_feature_selected = StandardScaler().fit_transform(df_metrics[features])
-        df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
+# Seleccionar características para análisis
+st.subheader('Selecciona características para análisis')
+features = st.multiselect('Selecciona características', df_metrics.columns[:-1], default=df_metrics.columns[:-1])
+if not features:
+    st.warning("Por favor, selecciona al menos una característica para continuar.")
+else:
+    # Asegurar la definición de scaled_data
+    scaled_data_feature_selected = StandardScaler().fit_transform(df_metrics[features])
+    df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
         
 # Definir num_clusters fuera del bloque condicional
 num_clusters = 3  # Puedes establecer un valor predeterminado
@@ -198,9 +283,9 @@ show_statistics = st.checkbox('Mostrar estadísticas descriptivas')
 
 if show_statistics:
     cluster_selection = st.selectbox('Elige un cluster para ver sus estadísticas:', range(num_clusters))
-    st.write(df[df_metrics['cluster'] == cluster_selection].describe())
+    st.write(df_metrics[df_metrics['cluster'] == cluster_selection].describe())
 	
-# Visualización de histograma por característica y cluster
+# Histograma por Característica y Cluster
 st.subheader('Histograma por Característica y Cluster')
 show_histogram = st.checkbox('Mostrar histograma')
 
@@ -217,25 +302,23 @@ if show_histogram:
     st.ylabel('Frecuencia')
     st.title(f'Histograma de {feature_selection} por Cluster')
 
+ # Gráfico de Dispersión 2D por Características y Cluster
+st.subheader('Gráfico de Dispersión 2D por Características y Cluster')
+show_scatter = st.checkbox('Mostrar gráfico de dispersión')
 
-    # Visualización de gráfico de dispersión 2D por características y cluster
-    st.subheader('Gráfico de dispersión 2D por Características y Cluster')
-    show_scatter = st.checkbox('Mostrar gráfico de dispersión')
+if show_scatter:
+    feature_x = st.selectbox('Elige una característica para el eje X:', df.columns[:-1])  # Excluimos la columna 'cluster'
+    feature_y = st.selectbox('Elige una característica para el eje Y:', df.columns[:-1])
 
-    if show_scatter:
-        feature_x = st.selectbox('Elige una característica para el eje X:', df.columns[:-1])  # Excluimos la columna 'cluster'
-        feature_y = st.selectbox('Elige una característica para el eje Y:', df.columns[:-1])
+    fig, ax = plt.subplots()
+    for cluster_id in range(num_clusters):
+        cluster_data = df[df['cluster'] == cluster_id]
+        ax.scatter(cluster_data[feature_x], cluster_data[feature_y], label=f'Cluster {cluster_id}', alpha=0.7)
 
-        fig, ax = plt.subplots()
-        for cluster_id in range(num_clusters):
-            cluster_data = df[df['cluster'] == cluster_id]
-            ax.scatter(cluster_data[feature_x], cluster_data[feature_y], label=f'Cluster {cluster_id}', alpha=0.7)
-
-        ax.set_xlabel(feature_x)
-        ax.set_ylabel(feature_y)
-        ax.legend()
-        st.pyplot(fig)
-    
+    ax.set_xlabel(feature_x)
+    ax.set_ylabel(feature_y)
+    ax.legend()
+    st.pyplot(fig)
 
     # Visualización de gráfico de dispersión 3D por características y cluster
     st.subheader('Gráfico de dispersión 3D por Características y Cluster')
