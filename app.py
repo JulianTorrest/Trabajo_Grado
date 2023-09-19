@@ -175,19 +175,19 @@ st.write(df_metrics[df_metrics['cluster'] == selected_cluster].head(num_records)
 st.subheader('Determinar el Número Óptimo de Clusters')
 show_elbow = st.checkbox('Mostrar gráfico del método del codo')
 if show_elbow:
-        distortions = []
-        K = range(1, 15)
-        for k in K:
- 		kmeanModel = KMeans(n_clusters=k)
-        	kmeanModel.fit(scaled_data_feature_selected)
-        	distortions.append(kmeanModel.inertia_)
+    distortions = []
+    K = range(1, 15)
+    for k in K:
+        kmeanModel = KMeans(n_clusters=k)
+        kmeanModel.fit(scaled_data_feature_selected)
+        distortions.append(kmeanModel.inertia_)
 
-        plt.figure(figsize=(10, 6))
-        plt.plot(K, distortions, 'bx-')
-        plt.xlabel('k')
-        plt.ylabel('Distorsión')
-        plt.title('Método del Codo para determinar k óptimo')
-        st.pyplot()
+    plt.figure(figsize=(10, 6))
+    plt.plot(K, distortions, 'bx-')
+    plt.xlabel('k')
+    plt.ylabel('Distorsión')
+    plt.title('Método del Codo para determinar k óptimo')
+    st.pyplot()
 
 # Dejar al usuario seleccionar el número de clusters
 num_clusters = st.slider('Selecciona el número de clusters', 1, 15, 5)
