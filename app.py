@@ -25,7 +25,7 @@ def get_csv_from_github(token, repo_path):
     return data
 
 TOKEN = "KhjNhbb4WPFfCbLlKNAo5HAtv55pqL3PlFCc"
-REPO_PATH = "https://github.com/JulianTorrest/Trabajo_Grado/blob/main/Data.csv"
+REPO_PATH = "JulianTorrest/Trabajo_Grado/main/Data.csv"  # Modificado a la estructura correcta
 
 # Función para descargar datos en CSV
 def download_link_csv(object_to_download, download_filename, download_link_text):
@@ -40,14 +40,11 @@ def load_data():
     data = data.drop_duplicates()
     return data
 
-data = load_data()
-data = data.reset_index(drop=True)
-
 st.title('Análisis Exploratorio de Datos y Clustering desde Google Sheets')
 
 def main():
     try:
-        data = get_csv_from_github(TOKEN, REPO_PATH)
+        data = load_data()
         st.write("Datos cargados exitosamente!")
         st.write(data.head())
     except Exception as e:
