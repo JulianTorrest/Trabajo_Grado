@@ -115,150 +115,150 @@ num_clusters = st.slider('Selecciona el número de clusters', 1, 10, 3)
 kmeans = KMeans(n_clusters=num_clusters)
 df_metrics['cluster'] = kmeans.fit_predict(scaled_data)
 
-        # Centroides para la visualización
-        cluster_centers_pca = pca.transform(kmeans.cluster_centers_)
+# Centroides para la visualización
+cluster_centers_pca = pca.transform(kmeans.cluster_centers_)
 
-        # Actualizar el dataframe PCA con los clusters
-        df_pca['cluster'] = df_metrics['cluster']
+# Actualizar el dataframe PCA con los clusters
+df_pca['cluster'] = df_metrics['cluster']
 
-        # Visualización de clusters con centroides
-        base = alt.Chart(df_pca).mark_circle(size=60).encode(
-            x='PC 1',
-            y='PC 2',
-            color='cluster:O',
-            tooltip=['PC 1', 'PC 2', 'cluster']
-        ).interactive()
+# Visualización de clusters con centroides
+base = alt.Chart(df_pca).mark_circle(size=60).encode(
+        x='PC 1',
+        y='PC 2',
+        color='cluster:O',
+        tooltip=['PC 1', 'PC 2', 'cluster']
+).interactive()
 
-        centroids = alt.Chart(pd.DataFrame(cluster_centers_pca, columns=['PC 1', 'PC 2'])).mark_circle(size=100, color='black').encode(
-            x='PC 1',
-            y='PC 2',
-        ).interactive()
+centroids = alt.Chart(pd.DataFrame(cluster_centers_pca, columns=['PC 1', 'PC 2'])).mark_circle(size=100, color='black').encode(
+        x='PC 1',
+        y='PC 2',
+).interactive()
 
-        st.altair_chart(base + centroids, use_container_width=True)
+st.altair_chart(base + centroids, use_container_width=True)
 
-        # Información detallada del cluster seleccionado
-        selected_cluster = st.selectbox('Selecciona un cluster para ver detalles', list(range(num_clusters)))
+# Información detallada del cluster seleccionado
+selected_cluster = st.selectbox('Selecciona un cluster para ver detalles', list(range(num_clusters)))
 
-        st.write(df_metrics[df_metrics['cluster'] == selected_cluster].describe())
+st.write(df_metrics[df_metrics['cluster'] == selected_cluster].describe())
 
-        # Enlace para descargar el dataset con clusters
-        if st.button('Descargar datos con clusters'):
-            st.markdown(download_link_csv(df_metrics, 'data_with_clusters.csv', 'Click aquí para descargar los datos con clusters!'), unsafe_allow_html=True)
+# Enlace para descargar el dataset con clusters
+if st.button('Descargar datos con clusters'):
+        st.markdown(download_link_csv(df_metrics, 'data_with_clusters.csv', 'Click aquí para descargar los datos con clusters!'), unsafe_allow_html=True)
 
-        # Silhouette Score
-        st.subheader('Silhouette Score por Cluster')
-        silhouette_scores = silhouette_samples(scaled_data, df_metrics['cluster'])
-        df_metrics['silhouette_score'] = silhouette_scores
+# Silhouette Score
+st.subheader('Silhouette Score por Cluster')
+silhouette_scores = silhouette_samples(scaled_data, df_metrics['cluster'])
+df_metrics['silhouette_score'] = silhouette_scores
 
-        # Visualizar silhouette score
+# Visualizar silhouette score
+plt.figure(figsize=(10, 6))
+sns.boxplot(x=df_metrics['cluster'], y=df_metrics['silhouette_score'])
+plt.title('Silhouette Score por Cluster')
+st.pyplot()
+
+# Seleccionar características para análisis
+st.subheader('Selecciona características para análisis')
+features = st.multiselect('Selecciona características', df_metrics.columns[:-1], default=df_metrics.columns[:-1])
+if not features:
+        st.warning("Por favor, selecciona al menos una característica para continuar.")
+        return
+
+scaled_data_feature_selected = StandardScaler().fit_transform(df_metrics[features])
+df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
+
+# Mostrar registros del cluster seleccionado
+st.subheader(f'Registros del Cluster {selected_cluster}')
+num_records = st.slider("Selecciona el número de registros a visualizar", 1, 50, 10)
+st.write(df_metrics[df_metrics['cluster'] == selected_cluster].head(num_records))
+
+# Determinar el número óptimo de clusters usando el método del codo
+st.subheader('Determinar el Número Óptimo de Clusters')
+show_elbow = st.checkbox('Mostrar gráfico del método del codo')
+if show_elbow:
+        distortions = []
+        K = range(1, 15)
+        for k in K:
+        kmeanModel = KMeans(n_clusters=k)
+        kmeanModel.fit(scaled_data_feature_selected)
+        distortions.append(kmeanModel.inertia_)
+
         plt.figure(figsize=(10, 6))
-        sns.boxplot(x=df_metrics['cluster'], y=df_metrics['silhouette_score'])
-        plt.title('Silhouette Score por Cluster')
+        plt.plot(K, distortions, 'bx-')
+        plt.xlabel('k')
+        plt.ylabel('Distorsión')
+        plt.title('Método del Codo para determinar k óptimo')
         st.pyplot()
 
-        # Seleccionar características para análisis
-        st.subheader('Selecciona características para análisis')
-        features = st.multiselect('Selecciona características', df_metrics.columns[:-1], default=df_metrics.columns[:-1])
-        if not features:
-            st.warning("Por favor, selecciona al menos una característica para continuar.")
-            return
+# Dejar al usuario seleccionar el número de clusters
+num_clusters = st.slider('Selecciona el número de clusters', 1, 15, 5)
+kmeans = KMeans(n_clusters=num_clusters)
+df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
 
-        scaled_data_feature_selected = StandardScaler().fit_transform(df_metrics[features])
-        df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
+# Mostrar la distribución de registros por cluster
+st.subheader('Distribución de Registros por Cluster')
+st.bar_chart(df_metrics['cluster'].value_counts())
 
-        # Mostrar registros del cluster seleccionado
-        st.subheader(f'Registros del Cluster {selected_cluster}')
-        num_records = st.slider("Selecciona el número de registros a visualizar", 1, 50, 10)
-        st.write(df_metrics[df_metrics['cluster'] == selected_cluster].head(num_records))
+# Seleccionar un cluster para mostrar sus registros
+cluster_options = list(range(num_clusters))
+selected_cluster = st.selectbox('Selecciona un cluster para visualizar', cluster_options)
+st.write(df_metrics[df_metrics['cluster'] == selected_cluster].head(num_records))
 
-        # Determinar el número óptimo de clusters usando el método del codo
-        st.subheader('Determinar el Número Óptimo de Clusters')
-        show_elbow = st.checkbox('Mostrar gráfico del método del codo')
-        if show_elbow:
-            distortions = []
-            K = range(1, 15)
-            for k in K:
-                kmeanModel = KMeans(n_clusters=k)
-                kmeanModel.fit(scaled_data_feature_selected)
-                distortions.append(kmeanModel.inertia_)
+# Determinar el número óptimo de clusters usando el método del codo
+st.subheader('Determinar el Número Óptimo de Clusters')
+show_elbow = st.checkbox('Mostrar gráfico del método del codo')
+if show_elbow:
+        distortions = []
+        K = range(1, 15)
+        for k in K:
+        kmeanModel = KMeans(n_clusters=k)
+        kmeanModel.fit(scaled_data_feature_selected)
+        distortions.append(kmeanModel.inertia_)
 
-            plt.figure(figsize=(10, 6))
-            plt.plot(K, distortions, 'bx-')
-            plt.xlabel('k')
-            plt.ylabel('Distorsión')
-            plt.title('Método del Codo para determinar k óptimo')
-            st.pyplot()
+        plt.figure(figsize=(10, 6))
+        plt.plot(K, distortions, 'bx-')
+        plt.xlabel('k')
+        plt.ylabel('Distorsión')
+        plt.title('Método del Codo para determinar k óptimo')
+        st.pyplot()
 
-        # Dejar al usuario seleccionar el número de clusters
-        num_clusters = st.slider('Selecciona el número de clusters', 1, 15, 5)
-        kmeans = KMeans(n_clusters=num_clusters)
-        df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
+# Dejar al usuario seleccionar el número de clusters
+num_clusters = st.slider('Selecciona el número de clusters', 1, 15, 5)
+kmeans = KMeans(n_clusters=num_clusters)
+df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
 
-        # Mostrar la distribución de registros por cluster
-        st.subheader('Distribución de Registros por Cluster')
-        st.bar_chart(df_metrics['cluster'].value_counts())
+# Mostrar la distribución de registros por cluster
+st.subheader('Distribución de Registros por Cluster')
+st.bar_chart(df_metrics['cluster'].value_counts())
 
-        # Seleccionar un cluster para mostrar sus registros
-        cluster_options = list(range(num_clusters))
-        selected_cluster = st.selectbox('Selecciona un cluster para visualizar', cluster_options)
-        st.write(df_metrics[df_metrics['cluster'] == selected_cluster].head(num_records))
+# Seleccionar un cluster para mostrar sus registros
+cluster_options = list(range(num_clusters))
+selected_cluster = st.selectbox('Selecciona un cluster para visualizar', cluster_options)
+st.write(df_metrics[df_metrics['cluster'] == selected_cluster].head(num_records))
 
-        # Determinar el número óptimo de clusters usando el método del codo
-        st.subheader('Determinar el Número Óptimo de Clusters')
-        show_elbow = st.checkbox('Mostrar gráfico del método del codo')
-        if show_elbow:
-            distortions = []
-            K = range(1, 15)
-            for k in K:
-                kmeanModel = KMeans(n_clusters=k)
-                kmeanModel.fit(scaled_data_feature_selected)
-                distortions.append(kmeanModel.inertia_)
-
-            plt.figure(figsize=(10, 6))
-            plt.plot(K, distortions, 'bx-')
-            plt.xlabel('k')
-            plt.ylabel('Distorsión')
-            plt.title('Método del Codo para determinar k óptimo')
-            st.pyplot()
-
-        # Dejar al usuario seleccionar el número de clusters
-        num_clusters = st.slider('Selecciona el número de clusters', 1, 15, 5)
-        kmeans = KMeans(n_clusters=num_clusters)
-        df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
-
-        # Mostrar la distribución de registros por cluster
-        st.subheader('Distribución de Registros por Cluster')
-        st.bar_chart(df_metrics['cluster'].value_counts())
-
-        # Seleccionar un cluster para mostrar sus registros
-        cluster_options = list(range(num_clusters))
-        selected_cluster = st.selectbox('Selecciona un cluster para visualizar', cluster_options)
-        st.write(df_metrics[df_metrics['cluster'] == selected_cluster].head(num_records))
-
-        # Estadísticas descriptivas por cluster
-		st.subheader('Estadísticas Descriptivas por Cluster')
-		show_statistics = st.checkbox('Mostrar estadísticas descriptivas')
+# Estadísticas descriptivas por cluster
+	st.subheader('Estadísticas Descriptivas por Cluster')
+	show_statistics = st.checkbox('Mostrar estadísticas descriptivas')
     
-		if show_statistics:
-			cluster_selection = st.selectbox('Elige un cluster para ver sus estadísticas:', range(num_clusters))
-			st.write(df[df_metrics['cluster'] == cluster_selection].describe())
+	if show_statistics:
+		cluster_selection = st.selectbox('Elige un cluster para ver sus estadísticas:', range(num_clusters))
+		st.write(df[df_metrics['cluster'] == cluster_selection].describe())
 
-    # Visualización de histograma por característica y cluster
-    st.subheader('Histograma por Característica y Cluster')
-    show_histogram = st.checkbox('Mostrar histograma')
+# Visualización de histograma por característica y cluster
+st.subheader('Histograma por Característica y Cluster')
+show_histogram = st.checkbox('Mostrar histograma')
 
-    if show_histogram:
-        feature_selection = st.selectbox('Elige una característica para ver su histograma:', df.columns[:-1])  # Excluimos la columna 'cluster'
-        bins = st.slider('Selecciona el número de bins:', 5, 100, 20)
+if show_histogram:
+feature_selection = st.selectbox('Elige una característica para ver su histograma:', df.columns[:-1])  # Excluimos la columna 'cluster'
+bins = st.slider('Selecciona el número de bins:', 5, 100, 20)
 
-        for cluster_id in range(num_clusters):
-            cluster_data = df[df['cluster'] == cluster_id][feature_selection]
-            st.histplot(cluster_data, bins=bins, kde=True, label=f'Cluster {cluster_id}')
+for cluster_id in range(num_clusters):
+        cluster_data = df[df['cluster'] == cluster_id][feature_selection]
+        st.histplot(cluster_data, bins=bins, kde=True, label=f'Cluster {cluster_id}')
 
-        st.legend()
-        st.xlabel(feature_selection)
-        st.ylabel('Frecuencia')
-        st.title(f'Histograma de {feature_selection} por Cluster')
+st.legend()
+st.xlabel(feature_selection)
+st.ylabel('Frecuencia')
+st.title(f'Histograma de {feature_selection} por Cluster')
 
     # Visualización de gráfico de dispersión 2D por características y cluster
     st.subheader('Gráfico de dispersión 2D por Características y Cluster')
