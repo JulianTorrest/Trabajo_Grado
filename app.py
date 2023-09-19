@@ -37,13 +37,14 @@ st.title('Análisis Exploratorio de Datos y Clustering desde Google Sheets')
 url = "https://docs.google.com/spreadsheets/d/1r4YcJuh5Qvp9_Z9D4soEyZymZD6tGTYBqqevXTIT6AQ/edit#gid=0"
 
 def main():
-	try:
-		data = get_data_from_gsheets(url)
-		st.write("Datos cargados exitosamente!")
-		st.write(data.head())
-	except Exception as e:
-		st.write("Hubo un error al cargar los datos.")
-		st.write(e)
+    try:
+        data = get_data_from_gsheets(url)
+        st.write("Datos cargados exitosamente!")
+        st.write(data.head())
+    except Exception as e:
+        st.write("Hubo un error al cargar los datos.")
+        st.write(e)
+
 
 if 'data' in locals():
     # (Resto del código de selección y filtrado)
