@@ -15,16 +15,17 @@ from sklearn.manifold import TSNE
 from sklearn.metrics import silhouette_samples
 import os
 
-# Función para obtener datos desde Google Sheets
-def get_data_from_gsheets(sheet_url):
-    scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/spreadsheets',
-             'https://www.googleapis.com/auth/drive']
-    creds = ServiceAccountCredentials.from_json_keyfile_name('https://github.com/JulianTorrest/Trabajo_Grado/blob/main/path_to_credentials.json', scope)  # Reemplazar por la ruta correcta
-    client = gspread.authorize(creds)
-    sheet = client.open_by_url(sheet_url).sheet1
-    data = sheet.get_all_records()
-    df = pd.DataFrame(data)
-    return df
+def get_csv_from_github(token, repo_path):
+    url = f"https://raw.githubusercontent.com/{repo_path}?token={token}"
+    headers = {"Authorization": f"token {token}"}
+    response = requests.get(url, headers=headers)
+    if response.status_code != 200:
+        raise Exception("Error al obtener el archivo. Verifica tu token y la ruta del repositorio.")
+    data = pd.read_csv(io.StringIO(response.text))
+    return data
+
+TOKEN = "KhjNhbb4WPFfCbLlKNAo5HAtv55pqL3PlFCc"
+REPO_PATH = "https://github.com/JulianTorrest/Trabajo_Grado/blob/main/Data.csv"
 
 # Función para descargar datos en CSV
 def download_link_csv(object_to_download, download_filename, download_link_text):
@@ -33,7 +34,15 @@ def download_link_csv(object_to_download, download_filename, download_link_text)
     return f'<a href="data:file/csv;base64,{b64}" download="{download_filename}">{download_link_text}</a>'
 
 # Streamlit
-data = get_data_from_gsheets("https://docs.google.com/spreadsheets/d/1r4YcJuh5Qvp9_Z9D4soEyZymZD6tGTYBqqevXTIT6AQ/edit#gid=0")
+def load_data():
+    data = get_csv_from_github(TOKEN, REPO_PATH)
+    data = data.dropna()
+    data = data.drop_duplicates()
+    return data
+
+data = load_data()
+data = data.reset_index(drop=True)
+
 st.title('Análisis Exploratorio de Datos y Clustering desde Google Sheets')
 url = "https://docs.google.com/spreadsheets/d/1r4YcJuh5Qvp9_Z9D4soEyZymZD6tGTYBqqevXTIT6AQ/edit#gid=0"
 
