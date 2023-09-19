@@ -6,5 +6,4 @@ oauth2client
 altair
 seaborn
 matplotlib 
-base64
 fpdf 
