@@ -401,6 +401,21 @@ def elbow_method(data, max_clusters=15):
         plt.legend()
         st.pyplot()
 
+    # Cuadro Resumen
+    st.subheader('Resumen de la Clustering')
+
+    # Total de registros
+    st.write(f'**Total de registros:** {df.shape[0]}')
+
+    # Número de clusters
+    st.write(f'**Número de clusters:** {num_clusters}')
+
+    # Registros por cluster
+    cluster_counts = df['cluster'].value_counts()
+    for cluster, count in cluster_counts.iteritems():
+        st.write(f'**Cluster {cluster}:** {count} registros')
+
+
 	    # Final de la aplicación
         st.write("Gracias por usar la aplicación. Si tienes más preguntas o comentarios, ¡no dudes en compartirlos!")
 
