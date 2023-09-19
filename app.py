@@ -242,24 +242,24 @@ show_statistics = st.checkbox('Mostrar estadísticas descriptivas')
 if show_statistics:
     cluster_selection = st.selectbox('Elige un cluster para ver sus estadísticas:', range(num_clusters))
     st.write(df[df_metrics['cluster'] == cluster_selection].describe())
-
-
+	
 # Visualización de histograma por característica y cluster
 st.subheader('Histograma por Característica y Cluster')
 show_histogram = st.checkbox('Mostrar histograma')
 
 if show_histogram:
-feature_selection = st.selectbox('Elige una característica para ver su histograma:', df.columns[:-1])  # Excluimos la columna 'cluster'
-bins = st.slider('Selecciona el número de bins:', 5, 100, 20)
+    feature_selection = st.selectbox('Elige una característica para ver su histograma:', df.columns[:-1])  # Excluimos la columna 'cluster'
+    bins = st.slider('Selecciona el número de bins:', 5, 100, 20)
 
-for cluster_id in range(num_clusters):
+    for cluster_id in range(num_clusters):
         cluster_data = df[df['cluster'] == cluster_id][feature_selection]
         st.histplot(cluster_data, bins=bins, kde=True, label=f'Cluster {cluster_id}')
 
-st.legend()
-st.xlabel(feature_selection)
-st.ylabel('Frecuencia')
-st.title(f'Histograma de {feature_selection} por Cluster')
+    st.legend()
+    st.xlabel(feature_selection)
+    st.ylabel('Frecuencia')
+    st.title(f'Histograma de {feature_selection} por Cluster')
+
 
     # Visualización de gráfico de dispersión 2D por características y cluster
     st.subheader('Gráfico de dispersión 2D por Características y Cluster')
