@@ -38,6 +38,7 @@ url = "https://docs.google.com/spreadsheets/d/1r4YcJuh5Qvp9_Z9D4soEyZymZD6tGTYBq
 
 def main():
     global df_metrics
+    global data
     try:
         data = get_data_from_gsheets(url)
         st.write("Datos cargados exitosamente!")
