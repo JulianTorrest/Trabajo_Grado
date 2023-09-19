@@ -40,7 +40,7 @@ def load_data():
     data = data.drop_duplicates()
     return data
 
-st.title('Análisis Exploratorio de Datos y Clustering desde Google Sheets')
+st.title('Inteligencia Comercial para el Hub de Bioeconomia')
 
 def main():
     try:
