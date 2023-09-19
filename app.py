@@ -144,16 +144,16 @@ if 'data' in locals():
                    'INGRESOS DE ACTIVIDADES ORDINARIAS', 'GANANCIA BRUTA', 'GANANCIA (PÉRDIDA) POR ACTIVIDADES DE OPERACIÓN', 'GANANCIA (PÉRDIDA)']
         
         # Antes de usar df_metrics, verifica que no sea None y sea un DataFrame válido
-	if df_metrics is not None and isinstance(df_metrics, pd.DataFrame) and not df_metrics.empty:
-    		features = st.multiselect('Selecciona características', df_metrics.columns[:-1], default=df_metrics.columns[:-1])
-    		if not features:
-        		st.warning("Por favor, selecciona al menos una característica para continuar.")
-    		else:
-        		# Asegurar la definición de scaled_data
-        		scaled_data_feature_selected = StandardScaler().fit_transform(df_metrics[features])
-        		df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
-	else:
-    		st.warning("No se pudo cargar el DataFrame df_metrics correctamente.")
+if df_metrics is not None and isinstance(df_metrics, pd.DataFrame) and not df_metrics.empty:
+    	features = st.multiselect('Selecciona características', df_metrics.columns[:-1], default=df_metrics.columns[:-1])
+    	if not features:
+        	st.warning("Por favor, selecciona al menos una característica para continuar.")
+    	else:
+        	# Asegurar la definición de scaled_data
+        	scaled_data_feature_selected = StandardScaler().fit_transform(df_metrics[features])
+        	df_metrics['cluster'] = kmeans.fit_predict(scaled_data_feature_selected)
+else:
+    	st.warning("No se pudo cargar el DataFrame df_metrics correctamente.")
 
 	    
 	num_clusters = st.slider("Selecciona el número de clusters", 2, 10, 3)
