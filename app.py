@@ -33,6 +33,7 @@ def download_link_csv(object_to_download, download_filename, download_link_text)
     return f'<a href="data:file/csv;base64,{b64}" download="{download_filename}">{download_link_text}</a>'
 
 # Streamlit
+data = get_data_from_gsheets("https://docs.google.com/spreadsheets/d/1r4YcJuh5Qvp9_Z9D4soEyZymZD6tGTYBqqevXTIT6AQ/edit#gid=0")
 st.title('Análisis Exploratorio de Datos y Clustering desde Google Sheets')
 url = "https://docs.google.com/spreadsheets/d/1r4YcJuh5Qvp9_Z9D4soEyZymZD6tGTYBqqevXTIT6AQ/edit#gid=0"
 
