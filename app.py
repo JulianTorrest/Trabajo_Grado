@@ -189,53 +189,49 @@ chart = alt.Chart(df_pca).mark_circle(size=60).encode(
 
 st.altair_chart(chart, use_container_width=True)
 
+# Método del codo para determinar el número óptimo de clusters
+st.subheader('Determinación del número óptimo de clusters: Método del Codo')
+
+def elbow_method(data, max_clusters=15):
+        distortions = []
+        K = range(1, max_clusters)
+        for k in K:
+        kmeanModel = KMeans(n_clusters=k)
+        kmeanModel.fit(data)
+        distortions.append(kmeanModel.inertia_)
+            
+        plt.figure(figsize=(10, 6))
+        plt.plot(K, distortions, 'bx-')
+        plt.xlabel('k')
+        plt.ylabel('Distorsión')
+        plt.title('Método del Codo para determinar k óptimo')
+        st.pyplot()
+
+# Selección del número de clusters
+num_clusters = st.slider('Selecciona el número de clusters', 1, 10, 3)
+kmeans = KMeans(n_clusters=num_clusters)
+df_metrics['cluster'] = kmeans.fit_predict(scaled_data)
+
+# Centroides para la visualización
+cluster_centers_pca = pca.transform(kmeans.cluster_centers_)
+
+# Actualizar el dataframe PCA con los clusters
+df_pca['cluster'] = df_metrics['cluster']
+
 # Enlace para descargar el dataset con clusters
 if st.button('Descargar datos con clusters'):
 	st.markdown(download_link_csv(df_metrics, 'data_with_clusters.csv', 'Click aquí para descargar los datos con clusters!'), unsafe_allow_html=True)
 
-        # Método del codo para determinar el número óptimo de clusters
-        st.subheader('Determinación del número óptimo de clusters: Método del Codo')
+# Silhouette Score
+st.subheader('Silhouette Score por Cluster')
+silhouette_scores = silhouette_samples(scaled_data, df_metrics['cluster'])
+df_metrics['silhouette_score'] = silhouette_scores
 
-        def elbow_method(data, max_clusters=15):
-            distortions = []
-            K = range(1, max_clusters)
-            for k in K:
-                kmeanModel = KMeans(n_clusters=k)
-                kmeanModel.fit(data)
-                distortions.append(kmeanModel.inertia_)
-            
-            plt.figure(figsize=(10, 6))
-            plt.plot(K, distortions, 'bx-')
-            plt.xlabel('k')
-            plt.ylabel('Distorsión')
-            plt.title('Método del Codo para determinar k óptimo')
-            st.pyplot()
-
-        # Selección del número de clusters
-        num_clusters = st.slider('Selecciona el número de clusters', 1, 10, 3)
-        kmeans = KMeans(n_clusters=num_clusters)
-        df_metrics['cluster'] = kmeans.fit_predict(scaled_data)
-
-        # Centroides para la visualización
-        cluster_centers_pca = pca.transform(kmeans.cluster_centers_)
-
-        # Actualizar el dataframe PCA con los clusters
-        df_pca['cluster'] = df_metrics['cluster']
-
-        # Enlace para descargar el dataset con clusters
-        if st.button('Descargar datos con clusters'):
-            st.markdown(download_link_csv(df_metrics, 'data_with_clusters.csv', 'Click aquí para descargar los datos con clusters!'), unsafe_allow_html=True)
-
-        # Silhouette Score
-        st.subheader('Silhouette Score por Cluster')
-        silhouette_scores = silhouette_samples(scaled_data, df_metrics['cluster'])
-        df_metrics['silhouette_score'] = silhouette_scores
-
-        # Visualizar silhouette score
-        plt.figure(figsize=(10, 6))
-        sns.boxplot(x=df_metrics['cluster'], y=df_metrics['silhouette_score'])
-        plt.title('Silhouette Score por Cluster')
-        st.pyplot()
+# Visualizar silhouette score
+plt.figure(figsize=(10, 6))
+sns.boxplot(x=df_metrics['cluster'], y=df_metrics['silhouette_score'])
+plt.title('Silhouette Score por Cluster')
+st.pyplot()
 
 # Seleccionar características para análisis
 st.subheader('Selecciona características para análisis')
