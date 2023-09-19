@@ -109,11 +109,11 @@ def elbow_method(data, max_clusters=15):
     plt.ylabel('Distorsión')
     plt.title('Método del Codo para determinar k óptimo')
     st.pyplot()
-
-        # Selección del número de clusters
-        num_clusters = st.slider('Selecciona el número de clusters', 1, 10, 3)
-        kmeans = KMeans(n_clusters=num_clusters)
-        df_metrics['cluster'] = kmeans.fit_predict(scaled_data)
+	
+# Selección del número de clusters
+num_clusters = st.slider('Selecciona el número de clusters', 1, 10, 3)
+kmeans = KMeans(n_clusters=num_clusters)
+df_metrics['cluster'] = kmeans.fit_predict(scaled_data)
 
         # Centroides para la visualización
         cluster_centers_pca = pca.transform(kmeans.cluster_centers_)
