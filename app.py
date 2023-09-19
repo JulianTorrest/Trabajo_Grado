@@ -45,7 +45,6 @@ def main():
         st.write("Hubo un error al cargar los datos.")
         st.write(e)
 
-
 if 'data' in locals():
     # (Resto del código de selección y filtrado)
 
@@ -93,28 +92,28 @@ if 'data' in locals():
         if st.button('Descargar datos con clusters'):
             st.markdown(download_link_csv(df_metrics, 'data_with_clusters.csv', 'Click aquí para descargar los datos con clusters!'), unsafe_allow_html=True)
 
-		# Método del codo para determinar el número óptimo de clusters
+        # Método del codo para determinar el número óptimo de clusters
         st.subheader('Determinación del número óptimo de clusters: Método del Codo')
-		
-def elbow_method(data, max_clusters=15):
-    distortions = []
-    K = range(1, max_clusters)
-    for k in K:
-        kmeanModel = KMeans(n_clusters=k)
-        kmeanModel.fit(data)
-        distortions.append(kmeanModel.inertia_)
-    
-    plt.figure(figsize=(10, 6))
-    plt.plot(K, distortions, 'bx-')
-    plt.xlabel('k')
-    plt.ylabel('Distorsión')
-    plt.title('Método del Codo para determinar k óptimo')
-    st.pyplot()
-	
-# Selección del número de clusters
-num_clusters = st.slider('Selecciona el número de clusters', 1, 10, 3)
-kmeans = KMeans(n_clusters=num_clusters)
-df_metrics['cluster'] = kmeans.fit_predict(scaled_data)
+
+        def elbow_method(data, max_clusters=15):
+            distortions = []
+            K = range(1, max_clusters)
+            for k in K:
+                kmeanModel = KMeans(n_clusters=k)
+                kmeanModel.fit(data)
+                distortions.append(kmeanModel.inertia_)
+            
+            plt.figure(figsize=(10, 6))
+            plt.plot(K, distortions, 'bx-')
+            plt.xlabel('k')
+            plt.ylabel('Distorsión')
+            plt.title('Método del Codo para determinar k óptimo')
+            st.pyplot()
+
+        # Selección del número de clusters
+        num_clusters = st.slider('Selecciona el número de clusters', 1, 10, 3)
+        kmeans = KMeans(n_clusters=num_clusters)
+        df_metrics['cluster'] = kmeans.fit_predict(scaled_data)
 
 # Centroides para la visualización
 cluster_centers_pca = pca.transform(kmeans.cluster_centers_)
@@ -139,7 +138,6 @@ st.altair_chart(base + centroids, use_container_width=True)
 
 # Información detallada del cluster seleccionado
 selected_cluster = st.selectbox('Selecciona un cluster para ver detalles', list(range(num_clusters)))
-
 st.write(df_metrics[df_metrics['cluster'] == selected_cluster].describe())
 
 # Enlace para descargar el dataset con clusters
