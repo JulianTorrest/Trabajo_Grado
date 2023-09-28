@@ -15,19 +15,15 @@ def main():
     st.subheader("Datos Generales")
 
     base_url = "https://raw.githubusercontent.com/"
-    image_title = st.text_input("Datos generales", "Colombia")
+    default_path = "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Colombia.png"
     
-    # Cambiamos el label del input y no mostramos el default_path por defecto
-    url_input = st.text_input("Introduce el path de la imagen:")
-
-    if url_input:
-        try:
-            image_url = base_url + url_input
-            image = get_image_from_github(image_url)
-            st.write(image_title)  # Usar st.write para mostrar el título de la imagen
-            st.image(image, use_column_width=True)
-        except Exception as e:
-            st.write(f"Ha ocurrido un error al cargar la imagen: {e}")
+    try:
+        image_url = base_url + default_path
+        image = get_image_from_github(image_url)
+        st.write("Datos generales")  # Aquí agregas el título estático para la imagen
+        st.image(image, use_column_width=True)
+    except Exception as e:
+        st.write(f"Ha ocurrido un error al cargar la imagen: {e}")
 
 if __name__ == "__main__":
     main()
