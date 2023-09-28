@@ -15,15 +15,25 @@ def main():
     st.subheader("Datos Generales")
 
     base_url = "https://raw.githubusercontent.com/"
-    default_path = "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Colombia.png"
+
+    # Lista de rutas de las imágenes en GitHub
+    paths = [
+        "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Colombia.png",
+        "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Datos generales Colombia.png",
+        "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Inflación.png",
+        "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Desempleo.png",
+        "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/PIB Colombia 2023.png",
+    ]
     
-    try:
-        image_url = base_url + default_path
-        image = get_image_from_github(image_url)
-        st.write("Colombia")  # Aquí agregas el título estático para la imagen
-        st.image(image, use_column_width=True)
-    except Exception as e:
-        st.write(f"Ha ocurrido un error al cargar la imagen: {e}")
+    for path in paths:
+        try:
+            image_url = base_url + path
+            image = get_image_from_github(image_url)
+            st.write(path.split("/")[-1].replace(".png", ""))  # Título de la imagen basado en el nombre del archivo
+            st.image(image, use_column_width=True)
+        except Exception as e:
+            st.write(f"Ha ocurrido un error al cargar la imagen {path}: {e}")
 
 if __name__ == "__main__":
     main()
+
