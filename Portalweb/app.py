@@ -14,11 +14,13 @@ def main():
     st.title("Hub de Bioeconomía")
     st.subheader("Datos Generales")
 
-    url_input = st.text_input("url = f"https://raw.githubusercontent.com/:", "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Colombia.png")
+    base_url = "https://raw.githubusercontent.com/"
+    default_path = "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Colombia.png"
+    url_input = st.text_input(f"url = {base_url}", default_path)
 
     if url_input:
         try:
-            image = get_image_from_github(url_input)
+            image = get_image_from_github(base_url + url_input)
             st.image(image, caption="Imagen cargada desde GitHub", use_column_width=True)
         except Exception as e:
             st.write(f"Ha ocurrido un error al cargar la imagen: {e}")
