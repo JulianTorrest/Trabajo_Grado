@@ -22,7 +22,11 @@ def main():
         "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Datos generales Colombia.png",
         "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Inflación.png",
         "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Desempleo.png",
+        "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Escalafón de competitividad Internacional.png",
         "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/PIB Colombia 2023.png",
+        "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Composición del PIB 2021.png",
+        "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/PIB Agropecuario total y por ramas.png",
+        "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Agricultura,ganaderia,caza,silvicultura,pesca.png",
     ]
     
     for path in paths:
