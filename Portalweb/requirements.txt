@@ -1,1 +1,3 @@
-pip install streamlit wbdata pandas
+streamlit
+wbdata
+pandas
