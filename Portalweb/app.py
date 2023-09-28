@@ -32,6 +32,7 @@ def main():
         "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/PIB Agropecuario total y por ramas.png",
         "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Detalle de la producción de los principales productos de la actividad agricola.png",
         "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Agricultura,ganaderia,caza,silvicultura,pesca.png",
+        "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Producción de carne de res,pollo y cerdo.png",
         "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Actividad pecuaria.png",
     ]
     
