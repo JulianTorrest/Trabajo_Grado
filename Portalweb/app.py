@@ -17,7 +17,7 @@ def main():
     base_url = "https://raw.githubusercontent.com/"
     default_path = "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Colombia.png"
     image_title = st.text_input("Datos generales","Colombia")
-    #url_input = st.text_input(f"Introduce el path de la imagen (Base URL: {base_url})", default_path)
+    url_input = st.text_input(f"Introduce el path de la imagen (Base URL: {base_url})", default_path)
 
     if url_input:
         try:
