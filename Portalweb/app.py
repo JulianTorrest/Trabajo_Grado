@@ -16,12 +16,14 @@ def main():
 
     base_url = "https://raw.githubusercontent.com/"
     default_path = "JulianTorrest/Trabajo_Grado/main/Portalweb/Colombia/Colombia.png"
-    url_input = st.text_input(f"url = {base_url}", default_path)
+    image_title = st.text_input("Datos generales de Colombia:", "Titulo por defecto")
+    url_input = st.text_input(f"Introduce el path de la imagen (Base URL: {base_url})", default_path)
 
     if url_input:
         try:
-            image = get_image_from_github(base_url + url_input)
-            st.image(image, caption="Imagen cargada desde GitHub", use_column_width=True)
+            image_url = base_url + url_input
+            image = get_image_from_github(image_url)
+            st.image(image, caption=image_title, use_column_width=True)
         except Exception as e:
             st.write(f"Ha ocurrido un error al cargar la imagen: {e}")
 
